@@ -1,3 +1,19 @@
+// Function to set the minimum date for the due date input
+function setMinDate() {
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const year = today.getFullYear();
+    const minDate = `${year}-${month}-${day}`;
+
+    document.getElementById('dueDate').setAttribute('min', minDate);
+}
+
+// Initialize the minimum date when the page loads
+window.onload = function() {
+    setMinDate();
+};
+
 // Task constructor function
 function Task(description, dueDate) {
     this.description = description;
@@ -8,24 +24,6 @@ function Task(description, dueDate) {
 Task.prototype.displayTask = function() {
     return `${this.description} (Due: ${this.dueDate})`;
 };
-
-// Closure to manage private properties
-function createTask(description, dueDate) {
-    let _description = description;
-    let _dueDate = dueDate;
-
-    return {
-        get description() {
-            return _description;
-        },
-        get dueDate() {
-            return _dueDate;
-        },
-        displayTask() {
-            return `${_description} (Due: ${_dueDate})`;
-        }
-    };
-}
 
 // Array to store tasks
 const tasks = [];
@@ -56,6 +54,11 @@ document.getElementById('taskForm').addEventListener('submit', function(e) {
 
     const description = document.getElementById('taskDescription').value;
     const dueDate = document.getElementById('dueDate').value;
+
+    if (new Date(dueDate) < new Date()) {
+        alert('Please select a future date.');
+        return;
+    }
 
     addTask(description, dueDate);
 
